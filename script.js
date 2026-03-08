@@ -110,7 +110,7 @@ function connectParticles() {
             const distance = dx * dx + dy * dy;
 
             if (distance < 12000) {
-                ctx.strokeStyle = "rgba(0, 210, 255, 0.08)";
+                ctx.strokeStyle = "rgba(0, 210, 255, 0.5)";
                 ctx.lineWidth = 0.5;
                 ctx.beginPath();
                 ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
