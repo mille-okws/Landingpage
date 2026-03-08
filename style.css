@@ -108,7 +108,7 @@ section {
 }
 
 .hero h1 {
-    font-size: 2rem;
+    font-size: 3rem;
     line-height: 1.2;
     letter-spacing: -1px;
     margin-bottom: 18px;
@@ -118,7 +118,7 @@ section {
 }
 
 .hero p {
-    font-size: 1rem;
+    font-size: 1.25rem;
     color: var(--text-dim);
     margin-bottom: 30px;
 }
