@@ -1,165 +1,319 @@
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
+/* ==================================================
+   0️⃣ VARIÁVEIS
+================================================== */
+:root {
+    --bg-deep: #050a15;
+    --primary: #00d2ff;
+    --secondary: #3a7bd5;
+    --text-main: #f8fafc;
+    --text-dim: #dce5fc;
 
-let particlesArray = [];
-const numberOfParticles = 180;
+    --glass: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.12);
 
-/* ==========================
-   RESIZE
-========================== */
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    --glow: 0 0 25px rgba(0,210,255,0.25);
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-/* ==========================
-   CLASSE PARTICULA
-========================== */
-
-class Particle {
-    constructor(x = null, y = null, isExplosion = false) {
-
-        this.x = x ?? Math.random() * canvas.width;
-        this.y = y ?? Math.random() * canvas.height;
-
-        this.size = Math.random() * 2 + 0.5;
-        this.opacity = Math.random() * 0.5 + 0.2;
-
-        this.explosion = isExplosion;
-
-        if (this.explosion) {
-            const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 25 + 1.5;
-
-            this.speedX = Math.cos(angle) * speed;
-            this.speedY = Math.sin(angle) * speed;
-
-            this.life = 1;
-        } else {
-            this.speedX = (Math.random() - 0.5) * 0.3;
-            this.speedY = (Math.random() - 0.5) * 0.3;
-        }
-    }
-
-    update() {
-
-        this.x += this.speedX;
-        this.y += this.speedY;
-
-        if (this.explosion) {
-            this.speedX *= 0.96;
-            this.speedY *= 0.96;
-            this.life -= 0.02;
-        } else {
-            if (this.x > canvas.width) this.x = 0;
-            if (this.x < 0) this.x = canvas.width;
-            if (this.y > canvas.height) this.y = 0;
-            if (this.y < 0) this.y = canvas.height;
-        }
-    }
-
-    draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-
-        if (this.explosion) {
-            ctx.fillStyle = `rgba(0, 210, 255, ${this.life})`;
-        } else {
-            ctx.fillStyle = `rgba(0, 210, 255, ${this.opacity})`;
-        }
-
-        ctx.fill();
-    }
+/* ==================================================
+   1️⃣ RESET
+================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* ==========================
-   INICIALIZA FUNDO
-========================== */
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+}
 
-function init() {
-    particlesArray = [];
-    for (let i = 0; i < numberOfParticles; i++) {
-        particlesArray.push(new Particle());
+/* ==================================================
+   2️⃣ FUNDO
+================================================== */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(0,210,255,0.15) 2px, transparent 2px),
+        radial-gradient(circle at 80% 70%, rgba(58,123,213,0.15) 2px, transparent 2px);
+    background-size: 600px 600px;
+    pointer-events: none;
+    animation: particleMove 120s linear infinite;
+    z-index: 0;
+}
+
+@keyframes particleMove {
+    from { background-position: 0 0; }
+    to { background-position: 600px 600px; }
+}
+/* header 2 */
+
+section h2 {
+    text-align: center;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 700;
+    margin-bottom: 40px;
+    color: var(--text-main);
+    position: relative;
+}
+
+section h2::after {
+    content: "";
+    width: 60px;
+    height: 2px;
+    background: var(--primary);
+    display: block;
+    margin: 15px auto 0;
+    opacity: 0.6;
+}
+
+/* p class lead */
+.lead {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 0 auto 30px;
+    text-align: center;
+}
+/* ==================================================
+   3️⃣ BASE MOBILE (PADRÃO)
+================================================== */
+section {
+    position: relative;
+    padding: 70px 0;
+    z-index: 2;
+}
+
+.container {
+    width: 100%;
+    padding: 0 20px;
+    margin: 0 auto;
+}
+
+/* HERO */
+.hero {
+    min-height: 80dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 0;
+}
+
+.hero h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    letter-spacing: -1px;
+    margin-bottom: 18px;
+    background: linear-gradient(to bottom, #fff 30%, var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    font-size: 1rem;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+}
+
+/* BOTÕES */
+.botoes {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.hero a {
+    width: 100%;
+    padding: 16px;
+    background: var(--primary);
+    color: #000;
+    text-decoration: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    transition: var(--transition);
+    text-align: center;
+}
+
+/* CARDS */
+.cards,
+.cards-duplos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 40px;
+}
+
+.card {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 28px;
+    border-radius: 18px;
+    transition: var(--transition);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+    color: var(--primary);
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+}
+
+.card p,
+.card ul li {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+}
+
+.card ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.card ul li {
+    margin-bottom: 10px;
+}
+/* ==================================================
+   ✨ TÍTULOS DE SEÇÃO (H2)
+================================================== */
+
+section h2 {
+    text-align: center;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+    position: relative;
+
+    background: linear-gradient(
+        90deg, 
+        #ffffff 0%, 
+        var(--primary) 50%, 
+        #ffffff 100%
+    );
+    
+    background-size: 300% auto;
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    animation: gradientMove 40s ease-in-out infinite;
+}
+
+/* Linha decorativa - Suavizada para acompanhar o título */
+section h2::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 2px;
+    margin: 18px auto 0;
+    border-radius: 10px;
+    
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    opacity: 0.6; 
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% center;
+    }
+    50% {
+        background-position: 100% center;
+    }
+    100% {
+        background-position: 0% center;
     }
 }
+/* ===========================
+   PARTICULAS BACKGROUND
+=========================== */
 
-/* ==========================
-   EXPLOSÃO DO BOTÃO
-========================== */
+#particles {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+}
 
-function explode(x, y) {
-    for (let i = 0; i < 60; i++) {
-        particlesArray.push(new Particle(x, y, true));
+body::before {
+    z-index: -1;
+}
+
+/* ==================================================
+   💻 DESKTOP
+================================================== */
+@media (min-width: 769px) {
+
+    section {
+        padding: 80px 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        padding: 0 40px;
+    }
+
+    .hero {
+        min-height: 80vh;
+        padding: 0;
+    }
+
+    .hero h1 {
+        font-size: clamp(2.5rem, 8vw, 5rem);
+        letter-spacing: -2px;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto 40px;
+    }
+
+    .botoes {
+        flex-direction: row;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .hero a {
+        width: auto;
+        padding: 16px 35px;
+        border-radius: 6px;
+    }
+
+    .cards {
+        grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+        gap: 40px;
+        margin-top: 80px;
+    }
+
+    .cards-duplos {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 40px;
+    }
+
+    .card {
+        padding: 40px;
+        border-radius: 24px;
+        backdrop-filter: blur(14px);
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        border-color: var(--primary);
+        box-shadow:
+            0 20px 60px rgba(0,0,0,0.4),
+            0 0 20px rgba(0,210,255,0.2);
     }
 }
-
-/* ==========================
-   CONEXÕES
-========================== */
-
-function connectParticles() {
-    for (let a = 0; a < particlesArray.length; a++) {
-        for (let b = a; b < particlesArray.length; b++) {
-
-            const dx = particlesArray[a].x - particlesArray[b].x;
-            const dy = particlesArray[a].y - particlesArray[b].y;
-            const distance = dx * dx + dy * dy;
-
-            if (distance < 12000) {
-                ctx.strokeStyle = "rgba(0, 210, 255, 0.08)";
-                ctx.lineWidth = 0.5;
-                ctx.beginPath();
-                ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                ctx.stroke();
-            }
-        }
-    }
-}
-
-/* ==========================
-   LOOP PRINCIPAL
-========================== */
-
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    particlesArray.forEach((particle, index) => {
-        particle.update();
-        particle.draw();
-
-        if (particle.explosion && particle.life <= 0) {
-            particlesArray.splice(index, 1);
-        }
-    });
-
-    connectParticles();
-    requestAnimationFrame(animate);
-}
-
-/* ==========================
-   EVENTO BOTÃO
-========================== */
-
-const buttons = document.querySelectorAll(".btn-primary");
-
-buttons.forEach(button => {
-    button.addEventListener("click", function () {
-        const rect = button.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
-
-        explode(x, y);
-    });
-});
-
-/* ==========================
-   START
-========================== */
-
-init();
-animate();
